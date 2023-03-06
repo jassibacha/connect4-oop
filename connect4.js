@@ -32,8 +32,11 @@ class Game {
 
         console.log('this:', this);
         console.log('handleClick:', this.handleClick);
-        // bind it here.. ?
-        top.addEventListener('click', this.handleClick);
+
+        // We bind handleClick to this, still kinda confused haha
+        const handleClickBind = this.handleClick.bind(this);
+        console.log(handleClickBind);
+        top.addEventListener('click', handleClickBind);
 
         for (let x = 0; x < this.width; x++) {
             const headCell = document.createElement('td');
@@ -129,7 +132,7 @@ class Game {
             );
         };
 
-        for (let y = 0; y < this, height; y++) {
+        for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 // get "check list" of 4 cells (starting here) for each of the different
                 // ways to win
