@@ -30,13 +30,15 @@ class Game {
         const top = document.createElement('tr');
         top.setAttribute('id', 'column-top');
 
-        console.log('this:', this);
-        console.log('handleClick:', this.handleClick);
+        //console.log('this:', this);
+        //console.log('handleClick:', this.handleClick);
 
-        // We bind handleClick to this, still kinda confused haha
-        const handleClickBind = this.handleClick.bind(this);
-        console.log(handleClickBind);
-        top.addEventListener('click', handleClickBind);
+        // Moved this to startGame()
+        // // We bind handleClick to this, still kinda confused haha
+        // this.handleClickBind = this.handleClick.bind(this);
+        // // we do this.handleClickBind to add it in constructor
+        // //console.log(handleClickBind);
+        // top.addEventListener('click', this.handleClickBind);
 
         for (let x = 0; x < this.width; x++) {
             const headCell = document.createElement('td');
@@ -58,6 +60,10 @@ class Game {
 
             board.append(row); // ?
         }
+
+        const startBtn = document.querySelector('.play');
+        startBtn.addEventListener('click', this.startGame());
+        //console.log(this.startGame());
     }
     /** findSpotForCol: given column x, return top empty y (null if filled) */
     findSpotForCol(x) {
@@ -78,6 +84,16 @@ class Game {
 
         const spot = document.getElementById(`${y}-${x}`);
         spot.append(piece);
+    }
+
+    startGame() {
+        console.log('startGame is being called.');
+        const top = document.getElementById('column-top');
+        // We bind handleClick to this, still kinda confused haha
+        this.handleClickBind = this.handleClick.bind(this);
+        // we do this.handleClickBind to add it in constructor
+        //console.log(handleClickBind);
+        top.addEventListener('click', this.handleClickBind);
     }
 
     /** endGame: announce game end */
@@ -124,8 +140,9 @@ class Game {
             //  - returns true if all are legal coordinates & all match currPlayer
 
             return cells.every(
-                ([y, x]) => y >= 0 && y < this,
-                height &&
+                ([y, x]) =>
+                    y >= 0 &&
+                    y < this.height &&
                     x >= 0 &&
                     x < this.width &&
                     this.board[y][x] === this.currPlayer
