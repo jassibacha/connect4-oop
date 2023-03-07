@@ -30,7 +30,7 @@ class Game {
         const top = document.createElement('tr');
         top.setAttribute('id', 'column-top');
 
-        //console.log('this:', this);
+        console.log('this:', this);
         //console.log('handleClick:', this.handleClick);
 
         // Moved this to startGame()
@@ -61,8 +61,10 @@ class Game {
             board.append(row); // ?
         }
 
+        // TALK WITH MENTOR ABOUT THIS BINDING, GET A BETTER EXPLANATION
         const startBtn = document.querySelector('.play');
-        startBtn.addEventListener('click', this.startGame());
+        this.startGame = this.startGame.bind(this);
+        startBtn.addEventListener('click', this.startGame);
         //console.log(this.startGame());
     }
     /** findSpotForCol: given column x, return top empty y (null if filled) */
@@ -88,17 +90,31 @@ class Game {
 
     startGame() {
         console.log('startGame is being called.');
+        const startBtn = document.querySelector('.play');
+        startBtn.innerText = 'Restart';
+        this.board = [];
+        this.currPlayer = 1;
+
+        const board = document.querySelector('#board');
+        board.innerHTML = '';
+        this.makeBoard();
+        this.makeHtmlBoard();
+
         const top = document.getElementById('column-top');
         // We bind handleClick to this, still kinda confused haha
         this.handleClickBind = this.handleClick.bind(this);
         // we do this.handleClickBind to add it in constructor
-        //console.log(handleClickBind);
         top.addEventListener('click', this.handleClickBind);
     }
 
     /** endGame: announce game end */
     endGame(msg) {
         alert(msg);
+        const top = document.querySelector('#column-top');
+        console.log('endGame this: ', this);
+        //this.handleClickBind = this.handleClick.bind(this);
+        top.removeEventListener('click', this.handleClickBind);
+        console.log('Removing event listener.');
     }
     /** handleClick: handle click of column top to play piece */
 
