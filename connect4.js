@@ -5,11 +5,18 @@
  * board fills (tie)
  */
 
+class Player {
+    constructor(color) {
+        this.color = color;
+    }
+}
+
 class Game {
-    constructor(width, height) {
+    constructor(p1, p2, height = 6, width = 7) {
+        this.players = [p1, p2];
         this.width = width;
         this.height = height;
-        this.currPlayer = 1;
+        this.currPlayer = p1;
         this.board = [];
         this.makeBoard();
         this.makeHtmlBoard();
@@ -34,11 +41,11 @@ class Game {
         //console.log('handleClick:', this.handleClick);
 
         // Moved this to startGame()
-        // // We bind handleClick to this, still kinda confused haha
-        // this.handleClickBind = this.handleClick.bind(this);
-        // // we do this.handleClickBind to add it in constructor
-        // //console.log(handleClickBind);
-        // top.addEventListener('click', this.handleClickBind);
+        // We bind handleClick to this, still kinda confused haha
+        this.handleClickBind = this.handleClick.bind(this);
+        // we do this.handleClickBind to add it in constructor
+        //console.log(handleClickBind);
+        top.addEventListener('click', this.handleClickBind);
 
         for (let x = 0; x < this.width; x++) {
             const headCell = document.createElement('td');
@@ -62,9 +69,9 @@ class Game {
         }
 
         // TALK WITH MENTOR ABOUT THIS BINDING, GET A BETTER EXPLANATION
-        const startBtn = document.querySelector('.play');
-        this.startGame = this.startGame.bind(this);
-        startBtn.addEventListener('click', this.startGame);
+        //const startBtn = document.querySelector('.play');
+        //this.startGame = this.startGame.bind(this);
+        //startBtn.addEventListener('click', this.startGame);
         //console.log(this.startGame());
     }
     /** findSpotForCol: given column x, return top empty y (null if filled) */
@@ -81,31 +88,36 @@ class Game {
     placeInTable(y, x) {
         const piece = document.createElement('div');
         piece.classList.add('piece');
-        piece.classList.add(`p${this.currPlayer}`);
+        console.log(this.currPlayer, this.currPlayer.color);
+        piece.style.backgroundColor = this.currPlayer.color;
+        //piece.classList.add(`${this.currPlayer}`);
         piece.style.top = -50 * (y + 2);
 
         const spot = document.getElementById(`${y}-${x}`);
         spot.append(piece);
     }
 
-    startGame() {
-        console.log('startGame is being called.');
-        const startBtn = document.querySelector('.play');
-        startBtn.innerText = 'Restart';
-        this.board = [];
-        this.currPlayer = 1;
+    // startGame() {
+    //     console.log('startGame is being called.');
+    //     const startBtn = document.querySelector('.play');
+    //     startBtn.innerText = 'Restart';
+    //     this.board = [];
+    //     this.p1 = new Player(document.querySelector('.p1Color').value);
+    //     this.p2 = new Player(document.querySelector('.p2Color').value);
+    //     console.log(this.p1); // this.p1 works
+    //     this.currPlayer = this.p1;
 
-        const board = document.querySelector('#board');
-        board.innerHTML = '';
-        this.makeBoard();
-        this.makeHtmlBoard();
+    //     const board = document.querySelector('#board');
+    //     board.innerHTML = '';
+    //     this.makeBoard();
+    //     this.makeHtmlBoard();
 
-        const top = document.getElementById('column-top');
-        // We bind handleClick to this, still kinda confused haha
-        this.handleClickBind = this.handleClick.bind(this);
-        // we do this.handleClickBind to add it in constructor
-        top.addEventListener('click', this.handleClickBind);
-    }
+    //     const top = document.getElementById('column-top');
+    //     // We bind handleClick to this, still kinda confused haha
+    //     this.handleClickBind = this.handleClick.bind(this);
+    //     // we do this.handleClickBind to add it in constructor
+    //     top.addEventListener('click', this.handleClickBind);
+    // }
 
     /** endGame: announce game end */
     endGame(msg) {
@@ -135,7 +147,7 @@ class Game {
 
         // check for win
         if (this.checkForWin()) {
-            return this.endGame(`Player ${this.currPlayer} won!`);
+            return this.endGame(`Player ${this.currPlayer.color} won!`);
         }
 
         // check for tie
@@ -144,7 +156,10 @@ class Game {
         }
 
         // switch players
-        this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+        this.currPlayer =
+            this.currPlayer === this.players[0]
+                ? this.players[1]
+                : this.players[0];
     }
     /*
      * checkForWin: check board cell-by-cell for "does a win start here?" */
@@ -203,4 +218,11 @@ class Game {
     }
 }
 
-new Game(6, 7);
+document.querySelector('.play').addEventListener('click', () => {
+    const board = document.querySelector('#board');
+    board.innerHTML = '';
+    let p1 = new Player(document.querySelector('.p1Color').value);
+    let p2 = new Player(document.querySelector('.p2Color').value);
+    new Game(p1, p2, 6, 7);
+});
+// make a click event listener out here
